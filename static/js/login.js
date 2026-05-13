@@ -9,6 +9,6 @@ document.addEventListener('DOMContentLoaded', function () {
     form.addEventListener('submit', function (event) {
         event.preventDefault();
         const username = document.getElementById('username').value.trim();
-        status.textContent = username ? 'Welcome, ' + username + '. Login flow can be connected next.' : 'Please enter a username.';
+        status.textContent = username ? 'Welcome, ' + username + 'FIX FEILDS ' : 'Please enter a username.';
     });
 });
