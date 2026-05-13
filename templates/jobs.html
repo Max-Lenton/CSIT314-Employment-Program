@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jobs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav>
+        <span class="brand">placeholder</span>
+        <a href="/">Home</a>
+        <a href="/profile">Profile</a>
+        <a href="/employees">Employees</a>
+        <a class="active" href="/jobs">Jobs</a>
+        <a href="/login">Login</a>
+    </nav>
+    <div class="wrap">
+        <div class="panel">
+            <h1>Jobs</h1>
+            <div id="jobs-container"></div>
+            <p><a href="/">Back to profile</a></p>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/jobs.js') }}"></script>
+</body>
+</html>

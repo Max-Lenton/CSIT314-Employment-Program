@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav>
+        <span class="brand">placeholder</span>
+        <a href="/">Home</a>
+        <a class="active" href="/profile">Profile</a>
+        <a href="/employees">Employees</a>
+        <a href="/jobs">Jobs</a>
+        <a href="/login">Login</a>
+    </nav>
+    <div class="wrap"><div class="container">
+        <div class="sidebar">
+            <div class="profile-card">
+                <div class="avatar"></div>
+                <h2>Dr. John Smith</h2>
+                <p>Senior Science Researcher</p>
+                <hr>
+                <div><strong>Doctorate in Science Research</strong></div>
+            </div>
+
+            <ul class="menu">
+                <li><a class="active" href="/">My Profile</a></li>
+                <li><a href="/">Homepage</a></li>
+                <li><a href="/employees">Employees</a></li>
+                <li><a href="/jobs">Jobs</a></li>
+                <li><a href="/login">Login</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <h1>My Profile</h1>
+                <div class="profile-icon">JS</div>
+            </div>
+
+            <div class="content-section">
+                <h3>Summary</h3>
+                <p id="summary-text">Loading profile summary...</p>
+            </div>
+
+            <div class="content-section">
+                <h3>About me</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            </div>
+
+            <div class="content-section">
+                <h3>Ongoing projects</h3>
+                <p>Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Cras ultricies ligula sed magna dictum porta.</p>
+            </div>
+        </div>
+    </div></div>
+
+    <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+</body>
+</html>
