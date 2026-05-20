@@ -27,6 +27,8 @@ class Candidate(db.Model):
     preferred_mode = db.Column(db.String(50))
     preferred_loc = db.Column(db.String(100))
     membership_type = db.Column(db.String(50))
+    
+    resume_path = db.Column(db.String(255))
 
     work_experiences = db.relationship("WorkExperience", backref="candidate", lazy=True)
     skills = db.relationship("Skill", secondary=candidate_skill, backref="candidates")

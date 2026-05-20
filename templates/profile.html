@@ -51,6 +51,16 @@
             </div>
 
             <div class="content-section">
+                <h3>Upload Resume</h3>
+                <form id="resume-upload-form" enctype="multipart/form-data">
+                    <input type="file" id="resume-file" name="resume" accept=".pdf" required>
+                    <button type="submit">Upload PDF</button>
+                </form>
+
+                <p id="upload-status" style="margin-top: 10px; font-weight: bold;"></p>
+            </div>
+
+            <div class="content-section">
                 <h3>Ongoing projects</h3>
                 <p>Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Cras ultricies ligula sed magna dictum porta.</p>
             </div>
