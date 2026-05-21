@@ -36,6 +36,37 @@ def homepage():
 def profile():
     return render_template("profile.html")
 
+@app.route("/signup", methods=["GET"])
+def signup_page():
+    return render_template("signup.html")
+
+@app.route("/api/signup", methods=["POST"])
+def api_signup():
+    data = request.json
+    
+    account_type = data.get("account_type")
+    username = data.get("username")
+    password = data.get("password")
+    display_name = data.get("display_name")
+
+    if not all([account_type, username, password, display_name]):
+        return jsonify({"message": "Please fill in all of the required fields."})
+    
+    try:
+        if account_type == "candidate":
+            new_account = Candidate(username=username, password=password, full_name=display_name)
+        elif account_type == "employer":
+            new_account = Employer(username=username, password=password, company_name=display_name)
+        else:
+            return jsonify({"message": "Invalid account type."}), 400
+        
+        db.session.add(new_account)
+        db.session.commit()
+        return jsonify({"message": "Account successfully created!"}), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": "Username already exists"})
 
 @app.route("/login")
 def login():
