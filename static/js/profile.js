@@ -40,4 +40,47 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     }
+    const prefForm = document.getElementById('preferences-form');
+    if (prefForm) {
+        prefForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const statusText = document.getElementById('preferences-status');
+            const yearsExp = document.getElementById('years_exp').value;
+            const preferredMode = document.getElementById('preferred_mode').value;
+            const preferredLoc = document.getElementById('preferred_loc').value;
+
+            statusText.style.color = "#4ecdc4";
+            statusText.textContent = "Saving preferences...";
+
+            fetch('/api/update_profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    years_exp: yearsExp,
+                    preferred_mode: preferredMode,
+                    preferred_loc: preferredLoc
+                })
+            })
+            .then(response => {
+                if (!response.ok) throw response;
+                return response.json();
+            })
+            .then(data => {
+                statusText.style.color = "#4ecdc4";
+                statusText.textContent = data.message;
+                
+                // Clear the status message after 3 seconds
+                setTimeout(() => { statusText.textContent = ""; }, 3000);
+            })
+            .catch(async (errorResponse) => {
+                const errorData = await errorResponse.json().catch(() => ({}));
+                statusText.style.color = "#ff6b6b";
+                statusText.textContent = errorData.message || "An error occurred while saving.";
+            });
+        });
+    }
+
 });

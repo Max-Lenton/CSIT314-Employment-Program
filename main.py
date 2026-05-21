@@ -29,9 +29,9 @@ with app.app_context():
     db.create_all()
     
     candidates_to_add = [
-        {"user": "cand1", "pass": "password123", "name": "Alice Smith", "email": "alice@email.com", "edu": "PhD in Bioinformatics", "exp": 5},
-        {"user": "cand2", "pass": "password123", "name": "Bob Jones", "email": "bob.j@email.com", "edu": "MSc in Data Science", "exp": 3},
-        {"user": "cand3", "pass": "password123", "name": "Charlie Davis", "email": "charlie.d@email.com", "edu": "BSc in Computer Science", "exp": 1}
+        {"user": "cand1", "pass": "password123", "name": "Alice Smith", "email": "alice@email.com", "edu": "PhD in Bioinformatics"},
+        {"user": "cand2", "pass": "password123", "name": "Bob Jones", "email": "bob.j@email.com", "edu": "MSc in Data Science"},
+        {"user": "cand3", "pass": "password123", "name": "Charlie Davis", "email": "charlie.d@email.com", "edu": "BSc in Computer Science"}
     ]
 
     employers_to_add = [
@@ -48,7 +48,6 @@ with app.app_context():
                 full_name=c["name"],
                 contact_info=c["email"],
                 education=c["edu"],
-                years_exp=c["exp"]
             )
             db.session.add(new_cand)
 
@@ -78,8 +77,32 @@ def profile():
     
     user_name = session.get('name', 'Unknown User')
     initials = "".join([part[0].upper() for part in user_name.split() if part])[:2]
+    account_type = session.get('account_type')
+
+    candidate_data = None
+    if account_type == 'candidate':
+        candidate_data = Candidate.query.get(session['user_id'])
     
-    return render_template("profile.html", user_name=user_name, initials=initials)
+    return render_template("profile.html", user_name=user_name, initials=initials, account_type=account_type, candidate=candidate_data)
+
+@app.route("/api/update_profile", methods=["POST"])
+def update_profile():
+    if 'user_id' not in session or session.get('account_type') != 'candidate':
+        return jsonify({"message": "Unauthorized"}), 401
+
+    data = request.json
+    candidate = Candidate.query.get(session['user_id'])
+    
+    if candidate:
+        candidate.years_exp = data.get('years_exp')
+        candidate.preferred_mode = data.get('preferred_mode')
+        candidate.preferred_loc = data.get('preferred_loc')
+        
+        db.session.commit()
+        return jsonify({"message": "Career preferences saved successfully!"}), 200
+        
+    return jsonify({"message": "Error saving profile."}), 500
+
 
 @app.route("/signup", methods=["GET"])
 def signup_page():
@@ -153,6 +176,9 @@ def browse_jobs():
 
 @app.route("/upload_resume", methods=['POST'])
 def upload_resume():
+    if 'user_id' not in session or session.get('account_type') != 'candidate':
+        return jsonify({"message": "Unauthorized"}), 401
+
     if 'resume' not in request.files:
         return jsonify({"message": "No file uploaded"}), 400
     
@@ -161,12 +187,17 @@ def upload_resume():
     if file.filename == '':
         return jsonify({"message": "No selected file"}), 400
         
-    if file and file.filename and file.filename.endswith('.pdf'):
-        filename = secure_filename(str(file.filename))
+    if file and file.filename.endswith('.pdf'):
+        filename = secure_filename(f"{session['user_id']}_{file.filename}")
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         
         file.save(filepath)
         
-        return jsonify({"message": "Resume successfully uploaded!"}), 200
+        candidate = Candidate.query.get(session['user_id'])
+        if candidate:
+            candidate.resume_path = filepath
+            db.session.commit()
+        
+        return jsonify({"message": "Resume uploaded and saved to your profile!"}), 200
         
     return jsonify({"message": "Invalid file type. Please upload a PDF."}), 400

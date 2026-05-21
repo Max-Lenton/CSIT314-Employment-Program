@@ -57,6 +57,32 @@
                     <button type="submit">Upload PDF</button>
                 </form>
 
+            {% if account_type == 'candidate' %}
+            <div class="content-section">
+                <h3>Career Preferences</h3>
+                <form id="preferences-form">
+                    <label for="years_exp" style="font-size: 14px; color: #ccc;">Years of Experience:</label>
+                    <input type="number" id="years_exp" placeholder="e.g., 5" min="0" required
+                        value="{{ candidate.years_exp if candidate.years_exp != None else '' }}">
+                    
+                    <label for="preferred_mode" style="font-size: 14px; color: #ccc;">Preferred Work Mode:</label>
+                    <select id="preferred_mode" required style="width: 100%; padding: 10px; margin: 8px 0 16px 0; border-radius: 8px; border: 1px solid #444; background: #111; color: #f5f5f5;">
+                        <option value="" disabled {% if not candidate.preferred_mode %}selected{% endif %}>Select...</option>
+                        <option value="Remote" {% if candidate.preferred_mode == 'Remote' %}selected{% endif %}>Remote</option>
+                        <option value="Hybrid" {% if candidate.preferred_mode == 'Hybrid' %}selected{% endif %}>Hybrid</option>
+                        <option value="On-site" {% if candidate.preferred_mode == 'On-site' %}selected{% endif %}>On-site</option>
+                    </select>
+
+                    <label for="preferred_loc" style="font-size: 14px; color: #ccc;">Preferred Location:</label>
+                    <input type="text" id="preferred_loc" placeholder="e.g., Sydney, NSW" required
+                        value="{{ candidate.preferred_loc if candidate.preferred_loc != None else '' }}">
+                    
+                    <button type="submit" style="margin-top: 10px;">Save Preferences</button>
+                </form>
+                <p id="preferences-status" style="margin-top: 10px; font-weight: bold;"></p>
+            </div>
+            {% endif %}
+
                 <p id="upload-status" style="margin-top: 10px; font-weight: bold;"></p>
             </div>
 
