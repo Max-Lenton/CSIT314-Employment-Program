@@ -67,6 +67,10 @@ with app.app_context():
 
 @app.route("/")
 def homepage():
+    
+    if 'user_id' not in session:
+        return redirect("/login")
+    
     return render_template("homepage.html")
 
 @app.route("/logout")
