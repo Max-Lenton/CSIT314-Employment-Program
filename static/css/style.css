@@ -4,6 +4,8 @@ a { color: #7de8df; text-decoration: none; }
 
 /* Navigation Bar*/
 nav { background: #1a1a1a; border-bottom: 1px solid #2f2f2f; padding: 0 32px; display: flex; align-items: center; gap: 8px; height: 52px; }
+.nav-left {display: flex; align-items: center; gap: 8px;}
+.nav-right { display: flex; align-items: center; gap: 8px; margin-left: auto;}
 nav a { color: #ccc; font-size: 14px; font-weight: 500; padding: 6px 14px; border-radius: 8px; text-decoration: none; }
 nav a:hover { background: #2a2a2a; color: #fff; }
 nav a.active { background: #4ecdc4; color: #0d2120; }

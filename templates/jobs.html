@@ -8,12 +8,22 @@
 </head>
 <body>
     <nav>
-        <span class="brand">placeholder</span>
-        <a href="/">Home</a>
-        <a href="/profile">Profile</a>
-        <a href="/employees">Employees</a>
-        <a class="active" href="/jobs">Jobs</a>
-        <a href="/login">Login</a>
+        <div class="nav-left">
+            <span class="brand">placeholder</span>
+            <a class="active" href="/">Home</a>
+            <a href="/profile">Profile</a>
+            <a href="/employees">Employees</a>
+            <a href="/jobs">Jobs</a>
+        </div>
+        
+        <div class="nav-right">
+            {% if 'user_id' in session %}
+                <a href="/logout" style="background: #ff6b6b; color: #111; font-weight: bold;">Logout</a>
+            {% else %}
+                <a href="/login">Login</a>
+                <a href="/signup" style="background: #4ecdc4; color: #0d2120; font-weight: bold;">Sign Up</a>
+            {% endif %}
+        </div>
     </nav>
     <div class="wrap">
         <div class="panel">

@@ -10,7 +10,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
 )
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-app.config["SECRET_KEY"] = "secret_key"
+app.config["SECRET_KEY"] = os.urandom(24)
 
 #PDFs will be saved in the static folder
 UPLOAD_FOLDER = os.path.join('static', 'uploads', 'resumes')
@@ -68,6 +68,11 @@ with app.app_context():
 @app.route("/")
 def homepage():
     return render_template("homepage.html")
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/login")
 
 
 @app.route("/profile")
