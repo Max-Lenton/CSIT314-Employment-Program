@@ -88,11 +88,16 @@ def profile():
     initials = "".join([part[0].upper() for part in user_name.split() if part])[:2]
     account_type = session.get('account_type')
 
-    candidate_data = None
     if account_type == 'candidate':
         candidate_data = Candidate.query.get(session['user_id'])
-    
-    return render_template("profile.html", user_name=user_name, initials=initials, account_type=account_type, candidate=candidate_data)
+        return render_template("candidate_profile.html", user_name=user_name, initials=initials, candidate=candidate_data)
+        
+    elif account_type == 'employer':
+        employer_data = Employer.query.get(session['user_id'])
+        return render_template("employer_profile.html", user_name=user_name, initials=initials, employer=employer_data)
+        
+    session.clear()
+    return redirect("/login")
 
 @app.route("/api/update_profile", methods=["POST"])
 def update_profile():
@@ -167,9 +172,9 @@ def api_login():
     
     employer = Employer.query.filter_by(username=username).first()
     if employer and employer.password==password:
-        session['user_id'] = employer.employer_id
+        session['user_id'] = employer.company_id
         session['account_type'] = 'employer'
-        session['name'] = employer.full_name
+        session['name'] = employer.company_name
         return jsonify({"message": "Login successful!"}), 200
     
     return jsonify({"message": "Invalid username or password."}), 401
