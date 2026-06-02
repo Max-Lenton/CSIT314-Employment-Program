@@ -3,33 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employees</title>
+    <title>Candidates</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <nav>
         <div class="nav-left">
             <span class="brand">placeholder</span>
-            <a class="active" href="/">Home</a>
+            <a href="/">Home</a>
             <a href="/profile">Profile</a>
-            <a href="/employees">Employees</a>
+            <a class="active" href="/employees">Employees</a>
             <a href="/jobs">Jobs</a>
         </div>
-        
         <div class="nav-right">
             {% if 'user_id' in session %}
-                <a href="/logout" style="background: #ff6b6b; color: #111; font-weight: bold;">Logout</a>
+                <a href="/logout" class="btn-danger">Logout</a>
             {% else %}
                 <a href="/login">Login</a>
-                <a href="/signup" style="background: #4ecdc4; color: #0d2120; font-weight: bold;">Sign Up</a>
+                <a href="/signup" class="btn-signup">Sign Up</a>
             {% endif %}
         </div>
     </nav>
     <div class="wrap">
         <div class="panel">
-            <h1>Employees</h1>
-            <ul id="employee-list"></ul>
-            <p><a href="/">Back to profile</a></p>
+            <h1>Browse Candidates</h1>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
+                <input id="kw" type="text" placeholder="Search candidate keyword..." style="flex:1;min-width:160px;margin:0;">
+                <input id="skill" type="text" placeholder="Filter by skill..." style="width:160px;margin:0;">
+                <input id="edu" type="text" placeholder="Education keyword..." style="width:160px;margin:0;">
+                <input id="minexp" type="number" placeholder="Min exp (yrs)" min="0" style="width:130px;margin:0;">
+                <select id="mode" style="width:150px;margin:0;">
+                    <option value="">Any Work Mode</option>
+                    <option value="Remote">Remote</option>
+                    <option value="Hybrid">Hybrid</option>
+                    <option value="On-site">On-site</option>
+                </select>
+                <button onclick="loadCandidates()" style="width:auto;">Search</button>
+                {% if account_type == 'employer' %}
+                <button onclick="loadRecommended()" style="width:auto;background:#1a3a38;border:1px solid #4ecdc4;color:#7de8df;">&#9733; Recommended</button>
+                {% endif %}
+            </div>
+            <div id="candidates-container"></div>
         </div>
     </div>
     <script src="{{ url_for('static', filename='js/employees.js') }}"></script>

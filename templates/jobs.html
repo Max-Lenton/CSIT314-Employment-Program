@@ -10,26 +10,39 @@
     <nav>
         <div class="nav-left">
             <span class="brand">placeholder</span>
-            <a class="active" href="/">Home</a>
+            <a href="/">Home</a>
             <a href="/profile">Profile</a>
             <a href="/employees">Employees</a>
-            <a href="/jobs">Jobs</a>
+            <a class="active" href="/jobs">Jobs</a>
         </div>
-        
         <div class="nav-right">
             {% if 'user_id' in session %}
-                <a href="/logout" style="background: #ff6b6b; color: #111; font-weight: bold;">Logout</a>
+                <a href="/logout" class="btn-danger">Logout</a>
             {% else %}
                 <a href="/login">Login</a>
-                <a href="/signup" style="background: #4ecdc4; color: #0d2120; font-weight: bold;">Sign Up</a>
+                <a href="/signup" class="btn-signup">Sign Up</a>
             {% endif %}
         </div>
     </nav>
     <div class="wrap">
         <div class="panel">
             <h1>Jobs</h1>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
+                <input id="kw" type="text" placeholder="Search job keyword..." style="flex:1;min-width:160px;margin:0;">
+                <select id="mode" style="width:150px;margin:0;">
+                    <option value="">Any Work Mode</option>
+                    <option value="Remote">Remote</option>
+                    <option value="Hybrid">Hybrid</option>
+                    <option value="On-site">On-site</option>
+                </select>
+                <input id="loc" type="text" placeholder="Location..." style="width:140px;margin:0;">
+                <input id="maxexp" type="number" placeholder="Max exp (yrs)" min="0" style="width:140px;margin:0;">
+                <button onclick="loadJobs()" style="width:auto;">Search</button>
+                {% if account_type == 'candidate' %}
+                <button onclick="loadRecommended()" style="width:auto;background:#1a3a38;border:1px solid #4ecdc4;color:#7de8df;">&#9733; Recommended</button>
+                {% endif %}
+            </div>
             <div id="jobs-container"></div>
-            <p><a href="/">Back to profile</a></p>
         </div>
     </div>
     <script src="{{ url_for('static', filename='js/jobs.js') }}"></script>

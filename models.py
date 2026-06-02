@@ -28,8 +28,8 @@ class Candidate(db.Model):
     years_exp = db.Column(db.Integer)
     preferred_mode = db.Column(db.String(50))
     preferred_loc = db.Column(db.String(100))
+    major = db.Column(db.String(100))
     membership_type = db.Column(db.String(50))
-    
     resume_path = db.Column(db.String(255))
 
     work_experiences = db.relationship("WorkExperience", backref="candidate", lazy=True)
@@ -81,3 +81,4 @@ class JobPosting(db.Model):
     salary_range = db.Column(db.String(50))
 
     required_skills = db.relationship("Skill", secondary=job_required_skill, backref="job_postings")
+
