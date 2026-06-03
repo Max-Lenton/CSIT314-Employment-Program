@@ -29,7 +29,8 @@ function renderCandidates(candidates, heading) {
     html += candidates.map(c => {
         const skills = c.skills.length ? c.skills.join(', ') : 'None listed';
         const exp = c.work_experience.map(w => `${w.job_title} @ ${w.company_name}`).join('; ') || 'None listed';
-        return `<div class="job">
+        
+        return `<div class="job" style="cursor: pointer;" onclick="window.location.href='/candidate/${c.id}'">            
             <strong>${c.name}</strong>
             <div style="font-size:13px;color:#aaa;">${c.education || ''} ${c.major ? '(' + c.major + ')' : ''} &middot; ${c.years_exp != null ? c.years_exp + ' yrs exp' : 'Exp not listed'}</div>
             <div style="font-size:13px;color:#aaa;">${c.preferred_mode || ''} ${c.preferred_loc ? '&middot; ' + c.preferred_loc : ''}</div>

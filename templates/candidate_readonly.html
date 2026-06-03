@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ candidate.full_name }} - Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav>
+        <div class="nav-left">
+            <span class="brand">placeholder</span>
+            <a href="/">Home</a>
+            <a href="/profile">Profile</a>
+            <a class="active" href="/employees">Employees</a>
+            <a href="/jobs">Jobs</a>
+        </div>
+        <div class="nav-right">
+            {% if 'user_id' in session %}
+                <a href="/logout" class="btn-danger">Logout</a>
+            {% else %}
+                <a href="/login">Login</a>
+                <a href="/signup" class="btn-signup">Sign Up</a>
+            {% endif %}
+        </div>
+    </nav>
+    <div class="wrap"><div class="container">
+        <div class="sidebar">
+            <div class="profile-card">
+                <div class="avatar"></div>
+                <h2>{{ candidate.full_name }}</h2>
+                <p>{{ candidate.education or 'No education listed' }}</p>
+                <hr>
+                <div><strong>{{ candidate.preferred_mode or 'Work mode not set' }}</strong></div>
+                <hr>
+                <div style="font-size:12px;color:#7de8df;">{{ (candidate.membership_type or 'Standard') }} Member</div>
+            </div>
+            <ul class="menu">
+                <li><a href="/employees">Back to Employees</a></li>
+                <li><a href="/jobs">Browse Jobs</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <h1>{{ candidate.full_name }}'s Profile</h1>
+                {% if candidate.full_name %}
+                    <div class="profile-icon">{{ candidate.full_name.split()|map('first')|join|upper|truncate(2, True, '') }}</div>
+                {% else %}
+                    <div class="profile-icon">??</div>
+                {% endif %}
+            </div>
+
+            <div class="content-section">
+                <h3>Profile Details</h3>
+                <p><strong>Contact Info:</strong> {{ candidate.contact_info or 'Not provided' }}</p>
+                <p><strong>Education:</strong> {{ candidate.education or 'Not provided' }}</p>
+                <p><strong>Major:</strong> {{ candidate.major or 'Not provided' }}</p>
+                <p><strong>Experience:</strong> {{ candidate.years_exp if candidate.years_exp is not none else '0' }} years</p>
+                <p><strong>Preferred Mode:</strong> {{ candidate.preferred_mode or 'Not provided' }}</p>
+                <p><strong>Preferred Location:</strong> {{ candidate.preferred_loc or 'Not provided' }}</p>
+            </div>
+
+            <div class="content-section">
+                <h3>Skills</h3>
+                <div id="skills-list" style="margin-bottom:10px;">
+                    {% for skill in candidate.skills %}
+                    <span class="skill-tag">{{ skill.skill_name }}</span>
+                    {% else %}
+                    <p style="font-size:14px;color:#aaa;">No skills listed.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h3>Work Experience</h3>
+                <div id="work-exp-list">
+                    {% for exp in candidate.work_experiences %}
+                    <div class="job">
+                        <strong>{{ exp.job_title }}</strong> @ {{ exp.company_name }}
+                    </div>
+                    {% else %}
+                    <p style="font-size:14px;color:#aaa;">No work experience listed.</p>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            {% if candidate.resume_path %}
+            <div class="content-section">
+                <h3>Resume</h3>
+                <p style="font-size:14px;color:#aaa;">This candidate has uploaded a resume.</p>
+                </div>
+            {% endif %}
+            
+        </div>
+    </div></div>
+</body>
+</html>

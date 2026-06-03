@@ -155,6 +155,21 @@ def signup_page():
 def browse_employees():
     return render_template("employees.html", account_type=session.get("account_type", ""))
 
+@app.route("/candidate/<int:candidate_id>")
+def view_candidate(candidate_id):
+    candidate_data = Candidate.query.get_or_404(candidate_id)
+
+    user_name = session.get("name", "Guest")
+    initials = "".join([p[0].upper() for p in user_name.split() if p])[:2] if user_name != "Guest" else "??"
+
+    return render_template(
+        "candidate_readonly.html",
+        candidate=candidate_data,
+        user_name=user_name,
+        initials=initials,
+        account_type=session.get("account_type", "")
+    )
+
 
 @app.route("/jobs")
 def browse_jobs():
