@@ -175,6 +175,21 @@ def view_candidate(candidate_id):
 def browse_jobs():
     return render_template("jobs.html", account_type=session.get("account_type", ""))
 
+@app.route("/job/<int:job_id>")
+def view_job(job_id):
+    job_data = JobPosting.query.get_or_404(job_id)
+    
+    user_name = session.get("name", "Guest")
+    initials = "".join([p[0].upper() for p in user_name.split() if p])[:2] if user_name != "Guest" else "??"
+
+    return render_template(
+        "job_readonly.html",
+        job=job_data,
+        user_name=user_name,
+        initials=initials,
+        account_type=session.get("account_type", "")
+    )
+
 
 # Auth API
 

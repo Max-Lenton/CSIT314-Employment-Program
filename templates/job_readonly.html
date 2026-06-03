@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ job.job_title }} - Job Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav>
+        <div class="nav-left">
+            <span class="brand">placeholder</span>
+            <a href="/">Home</a>
+            <a href="/profile">Profile</a>
+            <a href="/employees">Employees</a>
+            <a class="active" href="/jobs">Jobs</a>
+        </div>
+        <div class="nav-right">
+            {% if 'user_id' in session %}
+                <a href="/logout" class="btn-danger">Logout</a>
+            {% else %}
+                <a href="/login">Login</a>
+                <a href="/signup" class="btn-signup">Sign Up</a>
+            {% endif %}
+        </div>
+    </nav>
+    <div class="wrap"><div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="profile-card">
+                <h2>{{ job.employer.company_name }}</h2>
+                <p>Hiring Employer</p>
+                <hr>
+                <div><strong>{{ job.employer.contact_info or 'No contact info provided' }}</strong></div>
+            </div>
+            <ul class="menu">
+                <li><a href="/jobs">Back to Jobs</a></li>
+                <li><a href="/employees">Browse Candidates</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1>{{ job.job_title }}</h1>
+            </div>
+
+            <div class="content-section">
+                <h3>Job Details</h3>
+                <p><strong>Company:</strong> {{ job.employer.company_name }}</p>
+                <p><strong>Location:</strong> {{ job.job_location or 'Not specified' }}</p>
+                <p><strong>Work Mode:</strong> {{ job.work_mode or 'Not specified' }}</p>
+                <p><strong>Salary Range:</strong> {{ job.salary_range or 'Not specified' }}</p>
+            </div>
+
+            <div class="content-section">
+                <h3>Description</h3>
+                <p style="white-space: pre-wrap;">{{ job.job_description or 'No description provided.' }}</p>
+            </div>
+
+            <div class="content-section">
+                <h3>Requirements</h3>
+                <p><strong>Education:</strong> {{ job.required_education or 'Not specified' }}</p>
+                <p><strong>Experience:</strong> {{ job.required_exp if job.required_exp is not none else '0' }} years minimum</p>
+                
+                <h3 style="margin-top: 16px;">Required Skills</h3>
+                <div id="skills-list" style="margin-bottom:10px;">
+                    {% for skill in job.required_skills %}
+                    <span class="skill-tag">{{ skill.skill_name }}</span>
+                    {% else %}
+                    <p style="font-size:14px;color:#aaa;">No specific skills listed.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div></div>
+</body>
+</html>

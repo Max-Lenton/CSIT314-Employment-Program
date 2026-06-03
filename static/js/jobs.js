@@ -26,7 +26,7 @@ function renderJobs(jobs, heading) {
     if (!jobs.length) { container.innerHTML = html + '<p style="color:#aaa;">No jobs found.</p>'; return; }
     html += jobs.map(j => {
         const skills = j.required_skills.length ? j.required_skills.join(', ') : 'None listed';
-        return `<div class="job">
+        return `<div class="job" style="cursor: pointer;" onclick="window.location.href='/job/${j.id}'">
             <strong>${j.title}</strong> &mdash; ${j.company}
             <div style="font-size:13px;color:#aaa;">${j.work_mode || ''} ${j.location ? '&middot; ' + j.location : ''} ${j.salary_range ? '&middot; ' + j.salary_range : ''}</div>
             <div style="font-size:13px;color:#bbb;margin-top:4px;">${j.description ? j.description.substring(0, 160) + (j.description.length > 160 ? '...' : '') : ''}</div>
