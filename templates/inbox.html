@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inbox</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav>
+        <div class="nav-left">
+            <span class="brand">Career_Connect</span>
+            <a href="/">Home</a>
+            <a href="/profile">Profile</a>
+            <a href="/employees">Employees</a>
+            <a href="/jobs">Jobs</a>
+            <a class="active" href="/inbox">Inbox</a>
+        </div>
+        <div class="nav-right">
+            {% if 'user_id' in session %}
+                <a href="/logout" class="btn-danger">Logout</a>
+            {% else %}
+                <a href="/login">Login</a>
+                <a href="/signup" class="btn-signup">Sign Up</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="wrap">
+        <div class="panel">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+                <h1>Inbox</h1>
+                <div style="display:flex;gap:8px;">
+                    <button onclick="filterInbox('all')" id="filter-all" class="filter-btn active-filter" style="width:auto;">All</button>
+                    <button onclick="filterInbox('pending')" id="filter-pending" class="filter-btn" style="width:auto;">Pending</button>
+                    <button onclick="filterInbox('accepted')" id="filter-accepted" class="filter-btn" style="width:auto;">Accepted</button>
+                    <button onclick="filterInbox('rejected')" id="filter-rejected" class="filter-btn" style="width:auto;">Rejected</button>
+                </div>
+            </div>
+            <div id="inbox-container"><p style="color:#aaa;">Loading...</p></div>
+        </div>
+    </div>
+
+    <script>
+    window.ACCOUNT_TYPE = "{{ account_type }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/inbox.js') }}"></script>
+</body>
+</html>

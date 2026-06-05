@@ -9,11 +9,12 @@
 <body>
     <nav>
         <div class="nav-left">
-            <span class="brand">placeholder</span>
+            <span class="brand">Career_Connect</span>
             <a href="/">Home</a>
             <a href="/profile">Profile</a>
             <a class="active" href="/employees">Employees</a>
             <a href="/jobs">Jobs</a>
+            <a href="/inbox">Inbox</a>
         </div>
         <div class="nav-right">
             {% if 'user_id' in session %}
@@ -91,8 +92,57 @@
                 <p style="font-size:14px;color:#aaa;">This candidate has uploaded a resume.</p>
                 </div>
             {% endif %}
+
+            <div class="content-section">
+                {% if account_type == 'employer' %}
+                <h3>Send Job Offer</h3>
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    <select id="offer-job-select" style="flex:1;margin:0;"><option value="">Loading your jobs...</option></select>
+                    <button id="offer-btn" onclick="sendOffer()" style="width:auto;padding:8px 20px;">Send Job Offer</button>
+                </div>
+                <p id="offer-status" style="margin:8px 0 0;font-size:13px;font-weight:600;"></p>
+                {% elif not account_type %}
+                <p style="font-size:14px;color:#aaa;"><a href="/login">Log in</a> as an employer to send job offers.</p>
+                {% endif %}
+            </div>
             
         </div>
     </div></div>
+
+    <script>
+    async function loadMyJobs() {
+        const res = await fetch('/api/my_jobs');
+        const jobs = await res.json();
+        const sel = document.getElementById('offer-job-select');
+        if (!sel) return;
+        if (!jobs.length) {
+            sel.innerHTML = '<option value="">No jobs posted yet</option>';
+            document.getElementById('offer-btn').disabled = true;
+            return;
+        }
+        sel.innerHTML = jobs.map(j => `<option value="${j.id}">${j.title}</option>`).join('');
+    }
+
+    async function sendOffer() {
+        const btn = document.getElementById('offer-btn');
+        const jobId = parseInt(document.getElementById('offer-job-select').value);
+        if (!jobId) return;
+        btn.disabled = true;
+        const res = await fetch('/api/offer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ candidate_id: {{ candidate.candidate_id }}, job_id: jobId })
+        });
+        const data = await res.json();
+        const el = document.getElementById('offer-status');
+        el.textContent = data.message;
+        el.style.color = res.ok ? '#4ecdc4' : '#ff8a8a';
+        if (!res.ok) btn.disabled = false;
+    }
+
+    {% if account_type == 'employer' %}
+    window.addEventListener('DOMContentLoaded', loadMyJobs);
+    {% endif %}
+    </script>
 </body>
 </html>
