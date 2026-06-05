@@ -82,3 +82,19 @@ class JobPosting(db.Model):
 
     required_skills = db.relationship("Skill", secondary=job_required_skill, backref="job_postings")
 
+
+class Application(db.Model):
+    __tablename__ = "Application"
+
+    application_id = db.Column(db.Integer, primary_key=True)
+    candidate_id = db.Column(db.Integer, db.ForeignKey("Candidate.candidate_id"), nullable=False)
+    job_id = db.Column(db.Integer, db.ForeignKey("JobPosting.job_id"), nullable=False)
+    # 'application' = candidate applied, 'offer' = employer offered
+    type = db.Column(db.String(20), nullable=False)
+    # 'pending', 'accepted', 'rejected'
+    status = db.Column(db.String(20), nullable=False, default="pending")
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+
+    candidate = db.relationship("Candidate", backref="applications")
+    job = db.relationship("JobPosting", backref="applications")
+

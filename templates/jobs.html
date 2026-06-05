@@ -9,11 +9,12 @@
 <body>
     <nav>
         <div class="nav-left">
-            <span class="brand">placeholder</span>
+            <span class="brand">Career_Connect</span>
             <a href="/">Home</a>
             <a href="/profile">Profile</a>
             <a href="/employees">Employees</a>
             <a class="active" href="/jobs">Jobs</a>
+            <a href="/inbox">Inbox</a>
         </div>
         <div class="nav-right">
             {% if 'user_id' in session %}
@@ -45,6 +46,7 @@
             <div id="jobs-container"></div>
         </div>
     </div>
+
     <script src="{{ url_for('static', filename='js/jobs.js') }}"></script>
 </body>
 </html>

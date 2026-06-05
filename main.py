@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, jsonify, session, redirect
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from extensions import db
-from models import Candidate, WorkExperience, Skill, Employer, JobPosting
+from models import Candidate, WorkExperience, Skill, Employer, JobPosting, Application
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
@@ -448,7 +448,164 @@ def mempership_page():
     return render_template("membership.html", account_type=session.get("account_type", ""))
 
 
+# Inbox / Applications
+
+@app.route("/inbox")
+def inbox():
+    if "user_id" not in session:
+        return redirect("/login")
+    return render_template("inbox.html", account_type=session.get("account_type"))
+
+
+@app.route("/api/apply", methods=["POST"])
+def apply_to_job():
+    if "user_id" not in session or session.get("account_type") != "candidate":
+        return jsonify({"message": "Unauthorized"}), 401
+    job_id = request.json.get("job_id")
+    if not job_id:
+        return jsonify({"message": "Missing job_id"}), 400
+    job = JobPosting.query.get(job_id)
+    if not job:
+        return jsonify({"message": "Job not found"}), 404
+    existing = Application.query.filter_by(
+        candidate_id=session["user_id"], job_id=job_id, type="application"
+    ).first()
+    if existing:
+        return jsonify({"message": "You have already applied for this job."}), 409
+    app_obj = Application(
+        candidate_id=session["user_id"],
+        job_id=job_id,
+        type="application",
+        status="pending",
+    )
+    db.session.add(app_obj)
+    db.session.commit()
+    return jsonify({"message": "Application sent!"}), 201
+
+
+@app.route("/api/offer", methods=["POST"])
+def offer_job():
+    if "user_id" not in session or session.get("account_type") != "employer":
+        return jsonify({"message": "Unauthorized"}), 401
+    data = request.json
+    candidate_id = data.get("candidate_id")
+    job_id = data.get("job_id")
+    if not candidate_id or not job_id:
+        return jsonify({"message": "Missing candidate_id or job_id"}), 400
+    job = JobPosting.query.get(job_id)
+    if not job or job.company_id != session["user_id"]:
+        return jsonify({"message": "Job not found or not yours"}), 404
+    candidate = Candidate.query.get(candidate_id)
+    if not candidate:
+        return jsonify({"message": "Candidate not found"}), 404
+    existing = Application.query.filter_by(
+        candidate_id=candidate_id, job_id=job_id, type="offer"
+    ).first()
+    if existing:
+        return jsonify({"message": "You have already sent an offer to this candidate for this job."}), 409
+    app_obj = Application(
+        candidate_id=candidate_id,
+        job_id=job_id,
+        type="offer",
+        status="pending",
+    )
+    db.session.add(app_obj)
+    db.session.commit()
+    return jsonify({"message": "Offer sent!"}), 201
+
+
+@app.route("/api/inbox")
+def api_inbox():
+    if "user_id" not in session:
+        return jsonify({"message": "Unauthorized"}), 401
+    account_type = session.get("account_type")
+    results = []
+
+    if account_type == "candidate":
+        candidate_id = session["user_id"]
+        apps = Application.query.filter_by(candidate_id=candidate_id).all()
+        for a in apps:
+            results.append({
+                "id": a.application_id,
+                "type": a.type,
+                "status": a.status,
+                "job_title": a.job.job_title,
+                "company": a.job.employer.company_name if a.job.employer else "",
+                "job_id": a.job_id,
+                "created_at": a.created_at.strftime("%d %b %Y") if a.created_at else "",
+            })
+    elif account_type == "employer":
+        employer = Employer.query.get(session["user_id"])
+        job_ids = [j.job_id for j in employer.job_postings]
+        apps = Application.query.filter(Application.job_id.in_(job_ids)).all() if job_ids else []
+        for a in apps:
+            results.append({
+                "id": a.application_id,
+                "type": a.type,
+                "status": a.status,
+                "job_title": a.job.job_title,
+                "candidate_name": a.candidate.full_name,
+                "candidate_id": a.candidate_id,
+                "job_id": a.job_id,
+                "created_at": a.created_at.strftime("%d %b %Y") if a.created_at else "",
+            })
+
+    return jsonify(results)
+
+
+@app.route("/api/inbox/<int:app_id>/accept", methods=["POST"])
+def accept_application(app_id):
+    if "user_id" not in session:
+        return jsonify({"message": "Unauthorized"}), 401
+    a = Application.query.get(app_id)
+    if not a:
+        return jsonify({"message": "Not found"}), 404
+    account_type = session.get("account_type")
+    # Employer accepts an application; candidate accepts an offer
+    if account_type == "employer":
+        employer = Employer.query.get(session["user_id"])
+        if a.job.company_id != employer.company_id:
+            return jsonify({"message": "Unauthorized"}), 403
+    elif account_type == "candidate":
+        if a.candidate_id != session["user_id"]:
+            return jsonify({"message": "Unauthorized"}), 403
+    a.status = "accepted"
+    db.session.commit()
+    return jsonify({"message": "Accepted."}), 200
+
+
+@app.route("/api/inbox/<int:app_id>/reject", methods=["POST"])
+def reject_application(app_id):
+    if "user_id" not in session:
+        return jsonify({"message": "Unauthorized"}), 401
+    a = Application.query.get(app_id)
+    if not a:
+        return jsonify({"message": "Not found"}), 404
+    account_type = session.get("account_type")
+    if account_type == "employer":
+        employer = Employer.query.get(session["user_id"])
+        if a.job.company_id != employer.company_id:
+            return jsonify({"message": "Unauthorized"}), 403
+    elif account_type == "candidate":
+        if a.candidate_id != session["user_id"]:
+            return jsonify({"message": "Unauthorized"}), 403
+    a.status = "rejected"
+    db.session.commit()
+    return jsonify({"message": "Rejected."}), 200
+
+
 # Data API
+
+@app.route("/api/my_jobs")
+def api_my_jobs():
+    """Returns the logged-in employer's own job postings (for the offer selector)."""
+    if "user_id" not in session or session.get("account_type") != "employer":
+        return jsonify([])
+    employer = Employer.query.get(session["user_id"])
+    if not employer:
+        return jsonify([])
+    return jsonify([{"id": j.job_id, "title": j.job_title} for j in employer.job_postings])
+
 
 @app.route("/api/candidates")
 def api_candidates():

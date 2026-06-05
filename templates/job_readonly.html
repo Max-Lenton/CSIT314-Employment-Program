@@ -9,11 +9,12 @@
 <body>
     <nav>
         <div class="nav-left">
-            <span class="brand">placeholder</span>
+            <span class="brand">Career_Connect</span>
             <a href="/">Home</a>
             <a href="/profile">Profile</a>
             <a href="/employees">Employees</a>
             <a class="active" href="/jobs">Jobs</a>
+            <a href="/inbox">Inbox</a>
         </div>
         <div class="nav-right">
             {% if 'user_id' in session %}
@@ -72,7 +73,34 @@
                     {% endfor %}
                 </div>
             </div>
+
+            <div class="content-section">
+                {% if account_type == 'candidate' %}
+                <h3>Apply</h3>
+                <button id="apply-btn" onclick="applyToJob()" style="width:auto;padding:8px 20px;">Apply for this Job</button>
+                <p id="apply-status" style="margin:8px 0 0;font-size:13px;font-weight:600;"></p>
+                {% elif not account_type %}
+                <p style="font-size:14px;color:#aaa;"><a href="/login">Log in</a> as a candidate to apply for this job.</p>
+                {% endif %}
+            </div>
         </div>
     </div></div>
+
+    <script>
+    async function applyToJob() {
+        const btn = document.getElementById('apply-btn');
+        btn.disabled = true;
+        const res = await fetch('/api/apply', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ job_id: {{ job.job_id }} })
+        });
+        const data = await res.json();
+        const el = document.getElementById('apply-status');
+        el.textContent = data.message;
+        el.style.color = res.ok ? '#4ecdc4' : '#ff8a8a';
+        if (!res.ok) btn.disabled = false;
+    }
+    </script>
 </body>
 </html>

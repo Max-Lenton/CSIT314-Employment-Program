@@ -9,11 +9,12 @@
 <body>
     <nav>
         <div class="nav-left">
-            <span class="brand">placeholder</span>
+            <span class="brand">Career_Connect</span>
             <a href="/">Home</a>
             <a class="active" href="/profile">Profile</a>
             <a href="/employees">Employees</a>
             <a href="/jobs">Jobs</a>
+            <a href="/inbox">Inbox</a>
         </div>
         <div class="nav-right">
             {% if 'user_id' in session %}
@@ -38,13 +39,33 @@
                 <a href="/membership" class="btn-upgrade" style="display: inline-block; text-align: center; text-decoration: none;">View Membership Plans</a>
                 {% endif %}
             </div>
-            <ul class="menu">
-                <li><a class="active" href="/profile">My Profile</a></li>
-                <li><a href="/">Homepage</a></li>
-                <li><a href="/employees">Employees</a></li>
-                <li><a href="/jobs">Jobs</a></li>
-                <li><a href="/logout">Logout</a></li>
-            </ul>
+            <div class="sidebar-stats">
+                <div class="stat-item">
+                    <span class="stat-value">{{ candidate.skills | length }}</span>
+                    <span class="stat-label">Skills listed</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">{{ candidate.work_experiences | length }}</span>
+                    <span class="stat-label">Work experiences</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">{{ candidate.years_exp if candidate.years_exp is not none else '—' }}</span>
+                    <span class="stat-label">Years experience</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value {% if candidate.resume_path %}stat-ok{% else %}stat-warn{% endif %}">
+                        {% if candidate.resume_path %}&#10003;{% else %}&#10007;{% endif %}
+                    </span>
+                    <span class="stat-label">Resume uploaded</span>
+                </div>
+            </div>
+            <div class="sidebar-tips">
+                <p class="tip-heading">Profile tips</p>
+                {% if not candidate.skills %}<p class="tip">&#43; Add skills to appear in searches</p>{% endif %}
+                {% if not candidate.resume_path %}<p class="tip">&#43; Upload a resume to stand out</p>{% endif %}
+                {% if not candidate.contact_info %}<p class="tip">&#43; Add contact info so employers can reach you</p>{% endif %}
+                {% if candidate.skills and candidate.resume_path and candidate.contact_info %}<p class="tip tip-done">&#10003; Profile looking good!</p>{% endif %}
+            </div>
         </div>
 
         <div class="main-content">

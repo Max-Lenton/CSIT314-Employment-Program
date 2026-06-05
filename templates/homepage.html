@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Homepage</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <nav>
@@ -14,17 +15,37 @@
             <a href="/profile">Profile</a>
             <a href="/employees">Employees</a>
             <a href="/jobs">Jobs</a>
+            <div class="search-container">
+                <input type="text" placeholder="Search...">
+                <button type="submit">Search</button>
+            </div>
         </div>
+        
         <div class="nav-right">
             {% if 'user_id' in session %}
-                <a href="/logout" class="btn-danger">Logout</a>
+                <a href="/logout" style="background: #ff6b6b; color: #111; font-weight: bold;">Logout</a>
             {% else %}
                 <a href="/login">Login</a>
-                <a href="/signup" class="btn-signup">Sign Up</a>
+                <a href="/signup" style="background: #4ecdc4; color: #0d2120; font-weight: bold;">Sign Up</a>
             {% endif %}
         </div>
     </nav>
     <div class="wrap">
+        <div class="card">
+            <h1>Homepage</h1>
+            <p id="home-message">Initializing...</p>
+            <p><a href="/">Back to profile</a></p>
+        </div>
+        <br/> 
+        <div class="card">
+            <h1>Latest Jobs</h1>
+        </div>
+        <br/> 
+        <div class="card">
+            <h1>Latest News</h1>
+        </div>
     </div>
+    <script src="{{ url_for('static', filename='js/homepage.js') }}"></script>
+    <script src="homepage.js"></script>
 </body>
 </html>

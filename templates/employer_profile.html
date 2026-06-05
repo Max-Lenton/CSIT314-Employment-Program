@@ -9,11 +9,12 @@
 <body>
     <nav>
         <div class="nav-left">
-            <span class="brand">placeholder</span>
+            <span class="brand">Career_Connect</span>
             <a href="/">Home</a>
             <a class="active" href="/profile">Profile</a>
             <a href="/employees">Employees</a>
             <a href="/jobs">Jobs</a>
+            <a href="/inbox">Inbox</a>
         </div>
         <div class="nav-right">
             {% if 'user_id' in session %}
@@ -36,13 +37,29 @@
                 <a href="/membership" class="btn-upgrade" style="display: inline-block; text-align: center; text-decoration: none;">View Membership Plans</a>
                 {% endif %}
             </div>
-            <ul class="menu">
-                <li><a class="active" href="/profile">Company Profile</a></li>
-                <li><a href="/">Homepage</a></li>
-                <li><a href="/employees">Browse Candidates</a></li>
-                <li><a href="/jobs">Job Postings</a></li>
-                <li><a href="/logout">Logout</a></li>
-            </ul>
+            <div class="sidebar-stats">
+                <div class="stat-item">
+                    <span class="stat-value">{{ employer.job_postings | length }}</span>
+                    <span class="stat-label">Active job postings</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">{{ 'Unlimited' if (employer.membership_type or 'Standard') == 'Premium' else '10' }}</span>
+                    <span class="stat-label">Recommendation limit</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value {% if (employer.membership_type or 'Standard') == 'Premium' %}stat-ok{% endif %}">
+                        {{ employer.membership_type or 'Standard' }}
+                    </span>
+                    <span class="stat-label">Membership tier</span>
+                </div>
+            </div>
+            <div class="sidebar-tips">
+                <p class="tip-heading">Quick tips</p>
+                {% if not employer.job_postings %}<p class="tip">&#43; Post your first job to start finding candidates</p>{% endif %}
+                {% if not employer.contact_info %}<p class="tip">&#43; Add contact info to your profile</p>{% endif %}
+                {% if (employer.membership_type or 'Standard') != 'Premium' %}<p class="tip">&#9733; Upgrade to Premium for unlimited recommendations</p>{% endif %}
+                {% if employer.job_postings and employer.contact_info %}<p class="tip tip-done">&#10003; Profile is active</p>{% endif %}
+            </div>
         </div>
 
         <div class="main-content">
