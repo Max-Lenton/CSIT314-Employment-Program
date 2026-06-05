@@ -103,7 +103,21 @@ def validate_session():
 def homepage():
     if "user_id" not in session:
         return redirect("/login")
-    return render_template("homepage.html")
+    user_name = session.get("name", "Unknown User")
+    initials = "".join([p[0].upper() for p in user_name.split() if p])[:2]
+    account_type = session.get("account_type", "")
+    # Latest 5 job postings
+    latest_jobs = JobPosting.query.order_by(JobPosting.job_id.desc()).limit(5).all()
+    # Latest 5 candidates (for employers / networking)
+    latest_candidates = Candidate.query.order_by(Candidate.candidate_id.desc()).limit(5).all()
+    return render_template(
+        "homepage.html",
+        user_name=user_name,
+        initials=initials,
+        account_type=account_type,
+        latest_jobs=latest_jobs,
+        latest_candidates=latest_candidates,
+    )
 
 
 @app.route("/logout")

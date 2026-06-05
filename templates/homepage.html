@@ -3,50 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homepage</title>
+    <title>Home – Career Connect</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/homepage.css') }}">
 </head>
 <body>
+    <!-- NAV -->
     <nav>
         <div class="nav-left">
             <span class="brand">Career_Connect</span>
             <a class="active" href="/">Home</a>
             <a href="/profile">Profile</a>
-            <a href="/employees">Employees</a>
+            <a href="/employees">People</a>
             <a href="/jobs">Jobs</a>
             <a href="/inbox">Inbox</a>
             <div class="search-container">
-                <input type="text" placeholder="Search...">
-                <button type="submit">Search</button>
+                <input type="text" id="nav-search" placeholder="Search people, jobs…" autocomplete="off">
+                <button type="button" onclick="navSearch()">Search</button>
             </div>
         </div>
-        
         <div class="nav-right">
-            {% if 'user_id' in session %}
-                <a href="/logout" style="background: #ff6b6b; color: #111; font-weight: bold;">Logout</a>
-            {% else %}
-                <a href="/login">Login</a>
-                <a href="/signup" style="background: #4ecdc4; color: #0d2120; font-weight: bold;">Sign Up</a>
-            {% endif %}
+            <a href="/logout" class="btn-danger">Logout</a>
         </div>
     </nav>
-    <div class="wrap">
-        <div class="card">
-            <h1>Homepage</h1>
-            <p id="home-message">Initializing...</p>
-            <p><a href="/">Back to profile</a></p>
-        </div>
-        <br/> 
-        <div class="card">
-            <h1>Latest Jobs</h1>
-        </div>
-        <br/> 
-        <div class="card">
-            <h1>Latest News</h1>
-        </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="lk-layout">
+
+        <!-- LEFT: Profile card -->
+        <aside class="lk-sidebar-left">
+            <div class="lk-profile-card">
+                <div class="lk-profile-banner"></div>
+                <div class="lk-profile-avatar">{{ initials }}</div>
+                <div class="lk-profile-info">
+                    <h2>{{ user_name }}</h2>
+                    <p class="lk-profile-type">
+                        {% if account_type == 'candidate' %}Candidate{% elif account_type == 'employer' %}Employer{% else %}Member{% endif %}
+                    </p>
+                    <a href="/profile" class="lk-btn-outline">View Profile</a>
+                </div>
+            </div>
+
+            <div class="lk-card lk-quick-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="/jobs">Browse Jobs</a></li>
+                    <li><a href="/employees">Browse Candidates</a></li>
+                    <li><a href="/membership">Membership</a></li>
+                    <li><a href="/inbox">Inbox</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- CENTRE: Feed -->
+        <main class="lk-feed">
+
+            <!-- Share box -->
+            <div class="lk-card lk-share-box">
+                <div class="lk-share-row">
+                    <div class="lk-share-avatar">{{ initials }}</div>
+                    <button class="lk-share-trigger" id="share-trigger">Share an update, article, or idea…</button>
+                </div>
+                <div class="lk-share-actions">
+                    <button class="lk-share-action-btn" onclick="alert('Coming soon')">📝 Post</button>
+                    <button class="lk-share-action-btn" onclick="alert('Coming soon')">🖼️ Photo</button>
+                    <button class="lk-share-action-btn" onclick="alert('Coming soon')">📄 Article</button>
+                </div>
+            </div>
+
+            <!-- Latest Jobs feed -->
+            <section class="lk-section">
+                <div class="lk-section-header">
+                    <h3>Latest Job Postings</h3>
+                    <a href="/jobs">See all →</a>
+                </div>
+                {% if latest_jobs %}
+                    {% for job in latest_jobs %}
+                    <div class="lk-feed-card lk-job-card">
+                        <div class="lk-job-icon">💼</div>
+                        <div class="lk-job-body">
+                            <h4><a href="/job/{{ job.job_id }}">{{ job.job_title }}</a></h4>
+                            <p class="lk-meta">
+                                {{ job.employer.company_name if job.employer else 'Unknown Company' }}
+                                {% if job.job_location %} · {{ job.job_location }}{% endif %}
+                                {% if job.work_mode %} · {{ job.work_mode }}{% endif %}
+                            </p>
+                            {% if job.salary_range %}
+                            <p class="lk-salary">{{ job.salary_range }}</p>
+                            {% endif %}
+                            <div class="lk-job-tags">
+                                {% for skill in job.required_skills[:4] %}
+                                <span class="lk-tag">{{ skill.skill_name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% if account_type == 'candidate' %}
+                        <a href="/job/{{ job.job_id }}" class="lk-btn-apply">Apply</a>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="lk-empty">No job postings yet. <a href="/jobs">Check back soon.</a></p>
+                {% endif %}
+            </section>
+
+            <!-- People you may know -->
+            <section class="lk-section">
+                <div class="lk-section-header">
+                    <h3>People You May Know</h3>
+                    <a href="/employees">See all →</a>
+                </div>
+                <div class="lk-people-grid">
+                    {% if latest_candidates %}
+                        {% for c in latest_candidates %}
+                        <div class="lk-person-card">
+                            <div class="lk-person-avatar">{{ c.full_name[:2].upper() }}</div>
+                            <h5><a href="/candidate/{{ c.candidate_id }}">{{ c.full_name }}</a></h5>
+                            <p class="lk-meta">{{ c.major or c.education or 'Candidate' }}</p>
+                            <a href="/candidate/{{ c.candidate_id }}" class="lk-btn-outline lk-btn-sm">View</a>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="lk-empty">No candidates yet.</p>
+                    {% endif %}
+                </div>
+            </section>
+        </main>
+
+        <!-- RIGHT: Sidebar widgets -->
+        <aside class="lk-sidebar-right">
+            <div class="lk-card lk-news-card">
+                <h4>Career Tips</h4>
+                <ul class="lk-news-list">
+                    <li>
+                        <span class="lk-news-dot"></span>
+                        <div>
+                            <p class="lk-news-title">Tailor your resume for every role</p>
+                            <p class="lk-news-sub">Recruiters spend ~7 seconds on a resume.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="lk-news-dot"></span>
+                        <div>
+                            <p class="lk-news-title">Network before you need a job</p>
+                            <p class="lk-news-sub">80% of jobs are filled through networking.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="lk-news-dot"></span>
+                        <div>
+                            <p class="lk-news-title">Upgrade your membership</p>
+                            <p class="lk-news-sub">Get seen by more employers with Premium.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="lk-news-dot"></span>
+                        <div>
+                            <p class="lk-news-title">Complete your profile</p>
+                            <p class="lk-news-sub">Profiles with photos get 14× more views.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="lk-card lk-upgrade-card">
+                <p class="lk-upgrade-label">Career Connect Premium</p>
+                <p class="lk-upgrade-text">Stand out with Premium — get direct messages, see who viewed your profile, and more.</p>
+                <a href="/membership" class="lk-btn-upgrade">Try Premium free</a>
+            </div>
+        </aside>
+
     </div>
+
     <script src="{{ url_for('static', filename='js/homepage.js') }}"></script>
-    <script src="homepage.js"></script>
 </body>
 </html>

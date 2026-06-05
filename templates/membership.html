@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+    <!-- NAV -->
     <nav>
         <div class="nav-left">
             <span class="brand">CoolCats</span>
@@ -20,35 +21,32 @@
         </div>
     </nav>
 
+    <!-- PAGE CONTENT -->
     <div class="wrap">
         <div class="header" style="text-align: center; display: block; margin-bottom: 40px;">
             <h1>Choose Your Membership</h1>
             <p style="color: #bbb;">Unlock the full potential of your career journey.</p>
         </div>
 
+        <!-- Pricing cards -->
         <div class="pricing-container">
-            <!-- Free Tier -->
+            <!-- FREE TIER -->
             <div class="pricing-card card">
                 <h2>Free Tier</h2>
                 <div class="price">$0<span>/month</span></div>
                 <ul class="benefits-list">
-                    <li>[Placeholder: Create a basic profile]</li>
-                    <li>[Placeholder: Browse limited job listings]</li>
-                    <li>[Placeholder: Standard search visibility]</li>
+                    <li>Browse limited listings</li>
                 </ul>
                 <button class="btn-outline" disabled>Current Plan</button>
             </div>
 
-            <!-- Premium Tier -->
+            <!-- PREMIUM TIER -->
             <div class="pricing-card card premium-card">
                 <h2>Premium Tier</h2>
                 <div class="price">$7.99<span>/month</span></div>
                 <div class="billing-subtext">or $79.99 / year</div>
                 <ul class="benefits-list">
-                    <li>[Placeholder: Unlimited job applications]</li>
-                    <li>[Placeholder: Priority search placement]</li>
-                    <li>[Placeholder: View who viewed your profile]</li>
-                    <li>[Placeholder: Advanced AI recommendations]</li>
+                    <li>Unlimited search!</li>
                 </ul>
                 <button class="btn-upgrade" id="btn-upgrade-premium" style="width: 100%; font-size: 16px; padding: 12px;">Upgrade to Premium</button>
                 <div id="upgrade-status" style="margin-top: 15px; font-size: 14px; text-align: center;"></div>

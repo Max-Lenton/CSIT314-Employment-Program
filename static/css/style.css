@@ -69,10 +69,32 @@ nav a.btn-danger {
     border: 1px solid rgba(255, 107, 107, 0.3);
 }
 nav a.btn-danger:hover { background: rgba(255, 107, 107, 0.25); }
-.search-container { display: flex; }
+.search-container { display: flex; align-items: center; gap: 4px; }
+.search-container input,
 .search-container button {
-    padding: 2px;
+    box-sizing: border-box;
+    height: 30px;
+    line-height: 28px;
+    font-size: 13px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.15);
+    margin: 0;
 }
+.search-container input {
+    padding: 0 10px;
+    background: rgba(255,255,255,0.07);
+    color: #e8e8e8;
+    outline: none;
+}
+.search-container input::placeholder { color: #888; }
+.search-container button {
+    padding: 0 12px;
+    background: rgba(78,205,196,0.15);
+    color: #4ecdc4;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.search-container button:hover { background: rgba(78,205,196,0.28); }
 
 /* Teal outline button (recommended) */
 button.btn-outline {

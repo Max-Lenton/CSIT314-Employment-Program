@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+    <!-- NAV -->
     <nav>
         <div class="nav-left">
             <span class="brand">Career_Connect</span>
@@ -25,8 +26,11 @@
             {% endif %}
         </div>
     </nav>
+
+    <!-- MAIN LAYOUT -->
     <div class="wrap"><div class="container">
-        <!-- Sidebar -->
+
+        <!-- SIDEBAR -->
         <div class="sidebar">
             <div class="profile-card">
                 <h2>{{ job.employer.company_name }}</h2>
@@ -40,7 +44,7 @@
             </ul>
         </div>
 
-        <!-- Main Content -->
+        <!-- MAIN CONTENT -->
         <div class="main-content">
             <div class="header">
                 <h1>{{ job.job_title }}</h1>
