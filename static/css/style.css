@@ -69,6 +69,10 @@ nav a.btn-danger {
     border: 1px solid rgba(255, 107, 107, 0.3);
 }
 nav a.btn-danger:hover { background: rgba(255, 107, 107, 0.25); }
+.search-container { display: flex; }
+.search-container button {
+    padding: 2px;
+}
 
 /* Teal outline button (recommended) */
 button.btn-outline {
