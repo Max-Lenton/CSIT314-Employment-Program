@@ -35,7 +35,7 @@
                 <hr>
                 <div style="font-size:12px;color:#7de8df;">{{ (candidate.membership_type or 'Standard') }} Member</div>
                 {% if (candidate.membership_type or 'Standard') != 'Premium' %}
-                <button id="upgrade-btn" onclick="upgradeMembership()" class="btn-upgrade">Upgrade to Premium</button>
+                <a href="/membership" class="btn-upgrade" style="display: inline-block; text-align: center; text-decoration: none;">View Membership Plans</a>
                 {% endif %}
             </div>
             <ul class="menu">

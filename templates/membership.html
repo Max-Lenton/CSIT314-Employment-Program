@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membership Plans</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav>
+        <div class="nav-left">
+            <span class="brand">CoolCats</span>
+            <a href="/">Home</a>
+            <a href="/profile">Profile</a>
+            <a href="/employees">Employees</a>
+            <a href="/jobs">Jobs</a>
+        </div>
+        <div class="nav-right">
+            <a href="/logout" style="background:#ff6b6b;color:#111;font-weight:bold;">Logout</a>
+        </div>
+    </nav>
+
+    <div class="wrap">
+        <div class="header" style="text-align: center; display: block; margin-bottom: 40px;">
+            <h1>Choose Your Membership</h1>
+            <p style="color: #bbb;">Unlock the full potential of your career journey.</p>
+        </div>
+
+        <div class="pricing-container">
+            <!-- Free Tier -->
+            <div class="pricing-card card">
+                <h2>Free Tier</h2>
+                <div class="price">$0<span>/month</span></div>
+                <ul class="benefits-list">
+                    <li>[Placeholder: Create a basic profile]</li>
+                    <li>[Placeholder: Browse limited job listings]</li>
+                    <li>[Placeholder: Standard search visibility]</li>
+                </ul>
+                <button class="btn-outline" disabled>Current Plan</button>
+            </div>
+
+            <!-- Premium Tier -->
+            <div class="pricing-card card premium-card">
+                <h2>Premium Tier</h2>
+                <div class="price">$7.99<span>/month</span></div>
+                <div class="billing-subtext">or $79.99 / year</div>
+                <ul class="benefits-list">
+                    <li>[Placeholder: Unlimited job applications]</li>
+                    <li>[Placeholder: Priority search placement]</li>
+                    <li>[Placeholder: View who viewed your profile]</li>
+                    <li>[Placeholder: Advanced AI recommendations]</li>
+                </ul>
+                <button class="btn-upgrade" id="btn-upgrade-premium" style="width: 100%; font-size: 16px; padding: 12px;">Upgrade to Premium</button>
+                <div id="upgrade-status" style="margin-top: 15px; font-size: 14px; text-align: center;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const upgradeBtn = document.getElementById("btn-upgrade-premium");
+            const statusText = document.getElementById("upgrade-status");
+
+            if (upgradeBtn) {
+                upgradeBtn.addEventListener("click", function () {
+                    statusText.style.color = "#4ecdc4";
+                    statusText.textContent = "Processing upgrade...";
+                    upgradeBtn.disabled = true;
+
+                    fetch("/api/upgrade_membership", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" }
+                    })
+                    .then(r => r.json().then(d => ({ ok: r.ok, data: d })))
+                    .then(res => {
+                        statusText.style.color = res.ok ? "#4ecdc4" : "#ff6b6b";
+                        statusText.textContent = res.data.message;
+                        if (res.ok) {
+                            setTimeout(() => {
+                                window.location.href = "/profile";
+                            }, 1500);
+                        } else {
+                            upgradeBtn.disabled = false;
+                        }
+                    })
+                    .catch(err => {
+                        statusText.style.color = "#ff6b6b";
+                        statusText.textContent = "An error occurred. Please try again.";
+                        upgradeBtn.disabled = false;
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

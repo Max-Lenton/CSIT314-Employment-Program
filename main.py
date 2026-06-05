@@ -439,6 +439,14 @@ def upgrade_membership():
     db.session.commit()
     return jsonify({"message": "Membership upgraded to Premium!"}), 200
 
+# Another membership API (for the tmeplate page)
+@app.route("/membership")
+def mempership_page():
+    if "user_id" not in session:
+        return redirect("/login")
+    
+    return render_template("membership.html", account_type=session.get("account_type", ""))
+
 
 # Data API
 

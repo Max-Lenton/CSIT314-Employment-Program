@@ -33,7 +33,7 @@
                 <hr>
                 <div><strong>{{ employer.contact_info or 'No contact info' }}</strong></div>
                 {% if (employer.membership_type or 'Standard') != 'Premium' %}
-                <button id="upgrade-btn" onclick="upgradeMembership()" class="btn-upgrade">Upgrade to Premium</button>
+                <a href="/membership" class="btn-upgrade" style="display: inline-block; text-align: center; text-decoration: none;">View Membership Plans</a>
                 {% endif %}
             </div>
             <ul class="menu">
